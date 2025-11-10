@@ -1,0 +1,180 @@
+.\"Copyright (c) 2025, Jesús Daniel Colmenares Oviedo <DtxdF@disroot.org>
+.\"All rights reserved.
+.\"
+.\"Redistribution and use in source and binary forms, with or without
+.\"modification, are permitted provided that the following conditions are met:
+.\"
+.\"* Redistributions of source code must retain the above copyright notice, this
+.\"  list of conditions and the following disclaimer.
+.\"
+.\"* Redistributions in binary form must reproduce the above copyright notice,
+.\"  this list of conditions and the following disclaimer in the documentation
+.\"  and/or other materials provided with the distribution.
+.\"
+.\"* Neither the name of the copyright holder nor the names of its
+.\"  contributors may be used to endorse or promote products derived from
+.\"  this software without specific prior written permission.
+.\"
+.\"THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+.\"AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\"IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+.\"DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+.\"FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\"DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+.\"SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+.\"CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+.\"OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+.\"OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+.Dd November 09, 2025
+.Dt waitforssh 1
+.Os
+.Sh NAME
+.Nm waitforssh
+.Nd Wait for a target to be up and running using SSH
+.Sh SYNOPSIS
+.Nm
+.Op Fl C Ar command
+.Op Fl T Ar command
+.Op Fl d Ar delay
+.Op Fl r Ar max-retries
+.Ar target
+.Nm
+.Fl v
+.Sh DESCRIPTION
+.Nm
+is a lightweight utility, written in POSIX shell, that waits for a target to be
+up and running via SSH and, if so, executes a command.
+.Pp
+.Bl -tag -width xxx
+.It Fl v
+Display version information about
+.Nm Ns .
+.It Fl C Ar command
+Command to be executed when
+.Nm
+successfully establishes a connection.
+.Pp
+By default, this parameter is set to
+.Sy true
+which means that the
+.Sy true
+utility will be executed on
+.Ar target Ns .
+.It Fl T Ar command
+Command to execute that controls the execution flow of
+.Nm
+and, therefore, the exit status. When this command is the same as the one specified by the
+.Fl C
+parameter, only this command is executed. By default,
+.Sy true
+is the default test command.
+.It Fl d Ar delay
+Before attempting to establish a connection and execute a command,
+.Nm
+waits for as many seconds as specified in this parameter.
+.Pp
+The special value
+.Sy random
+which is the default value, is accepted to choose a random number between
+.Sy 1
+and
+.Sy 10 Ns .
+.Pp
+See
+.XR sleep 1
+for more details on the syntax.
+.It Fl r Ar max-retries
+Total number of retries before
+.Nm
+exits with a non-zero exit status.
+.El
+.Sh ENVIRONMENT
+.Bl -dash
+.It
+.Ev WAITFORSSH_LOGLEVEL Ns :
+Verbosity level that is used when logging messages from
+.Xr ssh 1 Ns .
+.Pp
+.Sy QUIET
+is the default value.
+.It
+.Ev WAITFORSSH_STRICTHOSTKEYCHECKING Ns :
+Controls how
+.Xr ssh 1
+verifies a remote server's host key to prevent man-in-the-middle attacks.
+.Pp
+.Sy no
+is the default value.
+.It
+.Ev WAITFORSSH_USERKNOWNHOSTSFILE Ns :
+File storing a list of public SSH keys.
+.Pp
+.Sy /dev/null
+is the default value.
+.El
+.Sh EXIT STATUS
+.Nm
+may fail for one of the following reasons:
+.Pp
+.Bl -dash -compact
+.It
+.Em EX_USAGE Ns :
+The command was used incorrectly.
+.It
+.Em EX_DATAERR Ns :
+An argument is incorrect.
+.It
+.Em EX_UNAVAILABLE
+A connection cannot be established.
+.El
+.Sh SEE ALSO
+.Xr ssh 1
+.Xr sshpass 1
+.Xr sysexits 3
+.Xr ssh_config 5
+.Sh AUTHORS
+.An Jesús Daniel Colmenares Oviedo Aq Mt DtxdF@disroot.org
+.Sh CAVEATS
+When
+.Nm
+establishes a connection, it executes the
+.Sy true
+utility as the first command to check whether the remote system can be accessed.
+If the
+.Fl C
+parameter is set to
+.Sy true Ns ,
+which is the default value, this operation is performed only once, but if a different
+value is specified, the specified command is executed after running the
+.Sy true
+utility. The command specified with the
+.Fl C
+parameter does not affect the exit status in any way.
+.Pp
+All these operations use the
+.Fl T
+parameter of
+.Xr ssh 1 Ns ,
+so keep in mind that some utilities may not work correctly unless they are designed
+to be non-interactive utilities.
+.Pp
+Also note that this utility does not prevent
+.Sy keyboard-interactive
+authentication for utilities such as
+.Xr sshpass 1
+from working correctly. However, it is better to use public key authentication.
+.Sh BUGS
+If the utility
+.Sy true
+is not found on the remote system or returns a non-zero exit status,
+.Nm
+retries as if it had failed when in fact it succeeded.
+.Sh SECURITY CONSIDERATIONS
+.Nm
+was designed for ephemeral environments that can be accessed securely
+.Po e.g.: via a VPN Pc Ns ,
+which explains the default settings and parameters chosen, which may be considered
+insecure. This utility does not replace utilities specialized in remote command
+execution, but only serves to wait for a remote device to be operational and
+nothing else. The fact that an arbitrary command can be executed with this utility
+is only a convenient feature in some cases.
