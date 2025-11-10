@@ -2,6 +2,12 @@
 
 **waitforssh** is a lightweight utility, written in POSIX shell, that waits for a target to be up and running via SSH and, if so, executes a command.
 
+## Installation
+
+```sh
+pkg install waitforssh
+```
+
 ## Motivation
 
 When I deploy VMs using tools such as [Overlord](https://github.com/DtxdF/overlord), I have to wait for the virtual machine to be up and running, which means I have to wait for sshd to be ready before I can access the virtual machine and do things here and there. In most cases, I use Ansible to automate the post-provisioning step, but first I have to wait for sshd, and due to the asynchronous nature of Overlord, it's not fun to have to check the current status over and over again. In other cases, I use a virtual machine with an operating system other than FreeBSD to perform other tasks. All of these virtual machines are ephemeral, in the sense that I can destroy them after all tasks are completed.
