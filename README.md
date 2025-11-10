@@ -18,14 +18,20 @@ So **waitforssh** was born to wait for sshd to be up and running and also check 
 2. Create the virtual machine used by the [Centralized Repository](https://github.com/AppJail-makejails) to build AppJail images using Buildbot:
 
    ```sh
+   cd ~/Devel/internal/overlord-deployments &&
    overlord apply -f pubVM/cicd.yml &&
-   waitforssh control-cicd &&
+   sleep 10 &&
+   waitforssh -C "pkg install -y python" control-cicd &&
    cd ~/Devel/internal/ansible-deployments &&
-   ansible-playbook --skip-tags dnsmasq --vault-password-file ~/.ansible_password.txt -i inventory.yml -l cicd \
-        playbooks/pkg.yml \
-        playbooks/appjail.yml \
-        playbooks/backrest.yml \
-        playbooks/cicd.yml
+   ansible-playbook \
+       --skip-tags dnsmasq \
+       --vault-password-file ~/.ansible_password.txt \
+       -i inventory.yml \
+       -l cicd \
+       playbooks/pkg.yml \
+       playbooks/appjail.yml \
+       playbooks/backrest.yml \
+       playbooks/cicd.yml
    ```
 
    Yeah, I destroy the virtual machine every time I want to change something or simply update it, which simply involves changing a parameter in my deployment file. If you are interested in the details of how I implemented this, see [this document](https://github.com/DtxdF/overlord/wiki/ephemeral_vm).
