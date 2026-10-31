@@ -5,7 +5,7 @@ RM?=rm -f
 PREFIX?=/usr/local
 MANDIR?=${PREFIX}/share/man
 
-WAITFORSSH_VERSION?=0.0.1
+WAITFORSSH_VERSION?=0.1.0
 
 all: install
 
