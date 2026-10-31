@@ -168,7 +168,7 @@ version()
 
 usage()
 {
-    echo "usage: waitforssh [-C <command>] [-T <command>] [-d <delay>] [-r <max-retries>] <target>"
+    echo "usage: waitforssh [-U] [-C <command>] [-T <command>] [-d <delay>] [-r <max-retries>] <target>"
     echo "       waitforssh -v"
 }
 
