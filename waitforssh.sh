@@ -40,16 +40,20 @@ EX_UNAVAILABLE=69
 main()
 {
     local _o
+    local invert=false
     local command="true"
     local test_command="true"
     local delay="random"
     local max_retries="1000"
 
-    while getopts ":vC:T:d:r:" _o; do
+    while getopts ":vUC:T:d:r:" _o; do
         case "${_o}" in
             v)
                 version
                 exit ${EX_OK}
+                ;;
+            U)
+                invert=true
                 ;;
             C)
                 command="${OPTARG}"
@@ -94,10 +98,20 @@ main()
 
         if ! wrapssh "${target}" "${command}" "${test_command}"; then
             retries=$((retries+1))
-            continue
+            if ${invert}; then
+                break
+            else
+                continue
+            fi
+        else
+            if ${invert}; then
+                retries=$((retries+1))
+            fi
         fi
 
-        break
+        if ! ${invert}; then
+            break
+        fi
     done
 
     if [ ${retries} -ge ${max_retries} ]; then

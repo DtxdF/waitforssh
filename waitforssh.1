@@ -1,4 +1,4 @@
-.\"Copyright (c) 2025, Jesús Daniel Colmenares Oviedo <DtxdF@disroot.org>
+.\"Copyright (c) 2025-2026, Jesús Daniel Colmenares Oviedo <DtxdF@disroot.org>
 .\"All rights reserved.
 .\"
 .\"Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 .\"CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 .\"OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 .\"OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-.Dd November 09, 2025
+.Dd October 31, 2026
 .Dt waitforssh 1
 .Os
 .Sh NAME
@@ -33,6 +33,7 @@
 .Nd Wait for a target to be up and running using SSH
 .Sh SYNOPSIS
 .Nm
+.Op Fl U
 .Op Fl C Ar command
 .Op Fl T Ar command
 .Op Fl d Ar delay
@@ -49,6 +50,11 @@ up and running via SSH and, if so, executes a command.
 .It Fl v
 Display version information about
 .Nm Ns .
+.It Fl U
+This option causes
+.Nm
+to be considered successful when the command fails. This may be due to the exit
+status of the command itself or a connection error.
 .It Fl C Ar command
 Command to be executed when
 .Nm
